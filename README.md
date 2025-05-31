@@ -1,9 +1,3 @@
-## move command with :m
+## ui improve and better errors
 
-## replace all selected
-
-## ui improve and better errors | file name, shift K 
-
-## neotree bug
-
-
+## learn about buffers
