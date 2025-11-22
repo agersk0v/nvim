@@ -2,24 +2,21 @@ return {
 	{
 		"williamboman/mason.nvim",
 		config = function()
-			require("mason").setup()
+			require("mason").setup {
+                registries = {
+                    'github:mason-org/mason-registry',
+                   -- 'github:Crashdummy/mason-registry',
+                }
+            }
 		end,
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
-		config = function()
+        config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					"lua_ls",
-					"ts_ls",
-					"html",
-					"emmet_ls",
-					"tailwindcss",
-					"svelte",
-					"gopls",
 					"rust_analyzer",
-					"omnisharp",
-					"wgsl_analyzer",
+                    "nil_ls",
 				},
 			})
 		end,
@@ -27,36 +24,44 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
-			local lspconfig = require("lspconfig")
-			local mason_registry = require("mason-registry")
+            vim.lsp.config("roslyn", {
+                settings = {
+                   --[[ 
+                    ["csharp|background_analysis"] = {
+                        background_analysis.dotnet_analyser_diagnostics_scope = fullSolution,
+                        background_analysis.dotnet_compiler_diagnostics_scope = fullSolution,
+                    },
+                    --]]
+                    ["csharp|inlay_hints"] = {
+                        csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                        csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                        csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+                        csharp_enable_inlay_hints_for_types = true,
+                        csharp_enable_inlay_hints_for_indexer_parameters = true,
+                        csharp_enable_inlay_hints_for_literal_parameters = true,
+                        csharp_enable_inlay_hints_for_object_creation_parameters = true,
+                        csharp_enable_inlay_hints_for_other_parameters = true,
+                        csharp_enable_inlay_hints_for_parameters = true,
 
-			-- resolve omnisharp path installed by Mason
-			local omnisharp_pkg = mason_registry.get_package("omnisharp")
-			local omnisharp_path = omnisharp_pkg:get_install_path() .. "/bin/omnisharp"
+                    },
+                    ["csharp|code_lens"] = {
+                        dotnet_enable_references_code_lens = true,
+                    },
+                    ["csharp|completion"] = {
+                        dotnet_provide_regex_completions = true,
+                        dotnet_show_completion_items_fom_unimported_namespaces = true,
+                        dotnet_show_name_completion_suggestions = true,
+                    },
+                    ["csharp|formatting"] = {
+                        dotnet_organize_imports_on_format = true,
+                    },
+                }
+            }) 
 
-			lspconfig.lua_ls.setup({})
-
-			lspconfig.ts_ls.setup({})
-
-			lspconfig.html.setup({})
-
-			lspconfig.emmet_ls.setup({})
-
-			lspconfig.tailwindcss.setup({})
-
-			lspconfig.svelte.setup({})
-
-			lspconfig.gopls.setup({})
-
-			lspconfig.rust_analyzer.setup({})
-
-			lspconfig.omnisharp.setup({
-				cmd = { omnisharp_path, "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
-				enable_editorconfig_support = true,
-				enable_roslyn_analyzers = true,
-				enable_import_completion = true,
-				organize_imports_on_format = true,
-			})
+            vim.keymap.set("n", "<leader>w", function()
+            vim.cmd("w")
+            vim.lsp.buf.format({async = true})
+            end, {noremap = true, silent = true})
 
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open Diagnostic Float" })
