@@ -17,6 +17,7 @@ return {
 				ensure_installed = {
 					"rust_analyzer",
                     "nil_ls",
+                    "gopls",
 				},
 			})
 		end,
