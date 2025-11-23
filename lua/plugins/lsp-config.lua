@@ -17,7 +17,7 @@ return {
 				ensure_installed = {
 					"rust_analyzer",
                     "nil_ls",
-                    "bash-language-server"
+                    "bash-language-server",
                     "gopls",
 				},
 			})
